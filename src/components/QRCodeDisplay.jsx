@@ -26,7 +26,7 @@ function QRCodeDisplay({ data, personalInfo }) {
           level="H"
           includeMargin={true}
           imageSettings={{
-            src: "/MdZaman.png",
+            src: `${import.meta.env.BASE_URL}MdZaman.png`,
             height: 60,
             width: 60,
             excavate: true,

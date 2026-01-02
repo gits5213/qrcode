@@ -1,0 +1,72 @@
+.qr-container {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-container h2 {
+  color: #333;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+}
+
+.qr-code-wrapper {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+/* Make the embedded image in QR code circular */
+.qr-code-wrapper svg image {
+  clip-path: circle(50% at center);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.qr-placeholder {
+  padding: 3rem;
+  text-align: center;
+  color: #999;
+  background: #f5f5f5;
+  border-radius: 12px;
+  border: 2px dashed #ddd;
+}
+
+.qr-info {
+  text-align: center;
+  max-width: 400px;
+}
+
+.qr-instructions {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.download-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.download-btn:active {
+  transform: translateY(0);
+}
+

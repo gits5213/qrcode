@@ -52,3 +52,111 @@
   line-height: 1.5;
 }
 
+.addresses-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.addresses-label {
+  font-weight: 600;
+  color: #555;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.address-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+}
+
+.input-wrapper .form-input {
+  padding-right: 45px;
+}
+
+.input-wrapper .form-textarea {
+  padding-right: 45px;
+  padding-bottom: 45px;
+}
+
+.address-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.address-header label {
+  font-weight: 600;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.add-item-btn {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  background-color: #667eea;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+  padding: 0;
+  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+}
+
+.add-item-btn:hover {
+  background-color: #5568d3;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.add-item-btn:active {
+  transform: scale(0.95);
+}
+
+.plus-icon-small {
+  font-size: 1.2rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.remove-address-btn {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  line-height: 1;
+  padding: 0;
+}
+
+.remove-address-btn:hover {
+  background-color: #dc2626;
+  transform: scale(1.1);
+}
+
+.remove-address-btn:active {
+  transform: scale(0.95);
+}

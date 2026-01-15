@@ -4,7 +4,12 @@ import './QRCodeDisplay.css'
 
 function QRCodeDisplay({ data, personalInfo }) {
   const { t } = useLanguage()
-  const hasData = Object.values(personalInfo).some(value => value.trim() !== '')
+  const hasData = Object.entries(personalInfo).some(([key, value]) => {
+    if (key === 'addresses' || key === 'emails' || key === 'websites') {
+      return Array.isArray(value) && value.some(item => item.trim() !== '')
+    }
+    return typeof value === 'string' && value.trim() !== ''
+  })
 
   if (!hasData) {
     return (
@@ -25,12 +30,6 @@ function QRCodeDisplay({ data, personalInfo }) {
           size={300}
           level="H"
           includeMargin={true}
-          imageSettings={{
-            src: `${import.meta.env.BASE_URL}MdZaman.png`,
-            height: 60,
-            width: 60,
-            excavate: true,
-          }}
         />
       </div>
       <div className="qr-info">

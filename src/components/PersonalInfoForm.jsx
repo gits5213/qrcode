@@ -1,24 +1,14 @@
 import { useLanguage } from '../i18n/LanguageContext'
 import './PersonalInfoForm.css'
 
-function PersonalInfoForm({ personalInfo, onInfoChange }) {
+function PersonalInfoForm({ personalInfo, onInfoChange, onAddressChange, onAddAddress, onRemoveAddress, onEmailChange, onAddEmail, onRemoveEmail, onWebsiteChange, onAddWebsite, onRemoveWebsite }) {
   const { t } = useLanguage()
   
   const fields = [
     { key: 'fullName', labelKey: 'fullName', placeholderKey: 'placeholderFullName', type: 'text' },
     { key: 'phoneNumber', labelKey: 'phoneNumber', placeholderKey: 'placeholderPhoneNumber', type: 'tel' },
     { key: 'whatsappNumber', labelKey: 'whatsappNumber', placeholderKey: 'placeholderWhatsAppNumber', type: 'tel' },
-    { key: 'personalEmail', labelKey: 'personalEmail', placeholderKey: 'placeholderPersonalEmail', type: 'email' },
-    { key: 'jobEmail', labelKey: 'jobEmail', placeholderKey: 'placeholderJobEmail', type: 'email' },
-    { key: 'workEmail', labelKey: 'workEmail', placeholderKey: 'placeholderWorkEmail', type: 'email' },
-    { key: 'bangladeshAddress', labelKey: 'bangladeshAddress', placeholderKey: 'placeholderBangladeshAddress', type: 'textarea' },
-    { key: 'usaAddress1', labelKey: 'usaAddress1', placeholderKey: 'placeholderUsaAddress1', type: 'textarea' },
-    { key: 'usaAddress2', labelKey: 'usaAddress2', placeholderKey: 'placeholderUsaAddress2', type: 'textarea' },
-    { key: 'trainingWebsite', labelKey: 'trainingWebsite', placeholderKey: 'placeholderTrainingWebsite', type: 'url' },
-    { key: 'educationalWebsite', labelKey: 'educationalWebsite', placeholderKey: 'placeholderEducationalWebsite', type: 'url' },
-    { key: 'portfolioWebsite', labelKey: 'portfolioWebsite', placeholderKey: 'placeholderPortfolioWebsite', type: 'url' },
-    { key: 'lisuFoundation', labelKey: 'lisuFoundation', placeholderKey: 'placeholderLisuFoundation', type: 'url' },
-    { key: 'madrashaOrphanage', labelKey: 'madrashaOrphanage', placeholderKey: 'placeholderMadrashaOrphanage', type: 'url' }
+    { key: 'linkedIn', labelKey: 'linkedIn', placeholderKey: 'placeholderLinkedIn', type: 'url' }
   ]
 
   return (
@@ -49,6 +39,132 @@ function PersonalInfoForm({ personalInfo, onInfoChange }) {
             )}
           </div>
         ))}
+        
+        {/* Dynamic Email Fields */}
+        <div className="addresses-section">
+          <label className="addresses-label">{t('emails')}</label>
+          {personalInfo.emails.map((email, index) => (
+            <div key={index} className="address-group">
+              <div className="address-header">
+                <label htmlFor={`email-${index}`}>{t('email')} {index + 1}</label>
+                {index > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => onRemoveEmail(index)}
+                    className="remove-address-btn"
+                    title={t('removeEmail')}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+              <div className="input-wrapper">
+                <input
+                  type="email"
+                  id={`email-${index}`}
+                  value={email}
+                  onChange={(e) => onEmailChange(index, e.target.value)}
+                  placeholder={t('placeholderPersonalEmail')}
+                  className="form-input"
+                />
+                {index === personalInfo.emails.length - 1 && personalInfo.emails.length < 10 && (
+                  <button
+                    type="button"
+                    onClick={onAddEmail}
+                    className="add-item-btn"
+                    title={t('addEmail')}
+                  >
+                    <span className="plus-icon-small">+</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {/* Dynamic Website Fields */}
+        <div className="addresses-section">
+          <label className="addresses-label">{t('websites')}</label>
+          {personalInfo.websites.map((website, index) => (
+            <div key={index} className="address-group">
+              <div className="address-header">
+                <label htmlFor={`website-${index}`}>{t('website')} {index + 1}</label>
+                {index > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => onRemoveWebsite(index)}
+                    className="remove-address-btn"
+                    title={t('removeWebsite')}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+              <div className="input-wrapper">
+                <input
+                  type="url"
+                  id={`website-${index}`}
+                  value={website}
+                  onChange={(e) => onWebsiteChange(index, e.target.value)}
+                  placeholder={t('placeholderTrainingWebsite')}
+                  className="form-input"
+                />
+                {index === personalInfo.websites.length - 1 && personalInfo.websites.length < 10 && (
+                  <button
+                    type="button"
+                    onClick={onAddWebsite}
+                    className="add-item-btn"
+                    title={t('addWebsite')}
+                  >
+                    <span className="plus-icon-small">+</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {/* Dynamic Address Fields */}
+        <div className="addresses-section">
+          <label className="addresses-label">{t('addresses')}</label>
+          {personalInfo.addresses.map((address, index) => (
+            <div key={index} className="address-group">
+              <div className="address-header">
+                <label htmlFor={`address-${index}`}>{t('address')} {index + 1}</label>
+                {index > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => onRemoveAddress(index)}
+                    className="remove-address-btn"
+                    title={t('removeAddress')}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+              <div className="input-wrapper">
+                <textarea
+                  id={`address-${index}`}
+                  value={address}
+                  onChange={(e) => onAddressChange(index, e.target.value)}
+                  placeholder={t('placeholderBangladeshAddress')}
+                  className="form-input form-textarea"
+                  rows="3"
+                />
+                {index === personalInfo.addresses.length - 1 && personalInfo.addresses.length < 10 && (
+                  <button
+                    type="button"
+                    onClick={onAddAddress}
+                    className="add-item-btn"
+                    title={t('addAddress')}
+                  >
+                    <span className="plus-icon-small">+</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
       </form>
     </div>
   )

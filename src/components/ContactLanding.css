@@ -1,0 +1,71 @@
+.contact-landing {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem;
+}
+
+.landing-content {
+  background: white;
+  border-radius: 20px;
+  padding: 3rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+.landing-content h1 {
+  color: #333;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+}
+
+.contact-details {
+  text-align: left;
+  margin-bottom: 2rem;
+}
+
+.contact-details p {
+  margin: 1rem 0;
+  color: #555;
+  font-size: 1rem;
+}
+
+.contact-details strong {
+  color: #333;
+  margin-right: 0.5rem;
+}
+
+.saving-message,
+.redirect-message {
+  color: #667eea;
+  font-weight: 600;
+  margin: 1rem 0;
+  font-size: 1.1rem;
+}
+
+.linkedin-btn {
+  margin-top: 1.5rem;
+  padding: 0.75rem 2rem;
+  background-color: #0077b5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.linkedin-btn:hover {
+  background-color: #005885;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 119, 181, 0.3);
+}
+
+.linkedin-btn:active {
+  transform: translateY(0);
+}

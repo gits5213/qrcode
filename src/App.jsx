@@ -7,13 +7,14 @@ import './App.css'
 
 function App() {
   const { t } = useLanguage()
-  const [qrCodeType, setQrCodeType] = useState('phoneContact') // 'phoneContact' or 'socialMedia'
+  const [qrCodeType, setQrCodeType] = useState('phoneContact') // 'phoneContact', 'socialMedia', or 'textMessage'
   const [personalInfo, setPersonalInfo] = useState({
     fullName: '',
     phoneNumber: '',
     whatsappNumber: '',
     linkedIn: '',
     facebook: '',
+    textMessage: '',
     emails: [''], // Start with one email (Email 1)
     addresses: [''], // Start with one address (Address 1)
     websites: [''] // Start with one website (Website 1)
@@ -31,6 +32,9 @@ function App() {
         return { title: t('titleWebsiteInformation'), subtitle: t('subtitleWebsiteInformation') }
       }
       return { title: t('titleSocialMediaQRCode'), subtitle: t('subtitleSocialMediaQRCode') }
+    }
+    if (qrCodeType === 'textMessage') {
+      return { title: t('titleTextMessageQRCode'), subtitle: t('subtitleTextMessageQRCode') }
     }
     return { title: t('titlePersonalQRCode'), subtitle: t('subtitlePersonalQRCode') }
   }
@@ -120,6 +124,26 @@ function App() {
   }
 
   const generateQRData = () => {
+    if (qrCodeType === 'textMessage') {
+      // Generate QR code for SMS/text message
+      // Accept phone numbers in any format (local or international)
+      let phone = personalInfo.phoneNumber ? personalInfo.phoneNumber.trim() : ''
+      
+      // Normalize phone number: remove spaces, dashes, parentheses for better compatibility
+      // Keep the original format but clean it up
+      if (phone) {
+        // Remove common formatting characters but preserve + for international format
+        phone = phone.replace(/[\s\-\(\)\.]/g, '')
+      }
+      
+      // Format: sms:phone (works with any phone format globally)
+      if (phone) {
+        return `sms:${phone}`
+      }
+      
+      return 'sms:'
+    }
+    
     if (qrCodeType === 'socialMedia') {
       // Generate QR code for social media and websites with labels
       const urlEntries = []

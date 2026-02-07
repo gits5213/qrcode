@@ -6,6 +6,10 @@ function PersonalInfoForm({ qrCodeType, onQrCodeTypeChange, personalInfo, onInfo
   
   // Determine dynamic heading based on QR code type and content
   const getDynamicHeading = () => {
+    if (qrCodeType === 'textMessage') {
+      return t('headingTextMessageInformation')
+    }
+    
     if (qrCodeType === 'socialMedia') {
       // Check what fields are actually filled
       const hasLinkedIn = personalInfo.linkedIn && personalInfo.linkedIn.trim()
@@ -69,6 +73,7 @@ function PersonalInfoForm({ qrCodeType, onQrCodeTypeChange, personalInfo, onInfo
           >
             <option value="phoneContact">{t('qrCodeTypePhoneContact')}</option>
             <option value="socialMedia">{t('qrCodeTypeSocialMedia')}</option>
+            <option value="textMessage">{t('qrCodeTypeTextMessage')}</option>
           </select>
         </div>
         
@@ -76,6 +81,11 @@ function PersonalInfoForm({ qrCodeType, onQrCodeTypeChange, personalInfo, onInfo
           // Show/hide fields based on QR code type
           // For social media: hide fullName, phone and WhatsApp fields
           if (qrCodeType === 'socialMedia' && (field.key === 'fullName' || field.key === 'phoneNumber' || field.key === 'whatsappNumber')) {
+            return null
+          }
+          
+          // For text message: show only phoneNumber, hide others
+          if (qrCodeType === 'textMessage' && (field.key === 'fullName' || field.key === 'whatsappNumber' || field.key === 'linkedIn' || field.key === 'facebook')) {
             return null
           }
           
@@ -100,6 +110,17 @@ function PersonalInfoForm({ qrCodeType, onQrCodeTypeChange, personalInfo, onInfo
                   placeholder={t(field.placeholderKey)}
                   className="form-input"
                 />
+              )}
+              {/* Show help text for phone number in text message mode */}
+              {qrCodeType === 'textMessage' && field.key === 'phoneNumber' && (
+                <small className="form-help-text" style={{ 
+                  display: 'block', 
+                  marginTop: '0.25rem', 
+                  color: '#666', 
+                  fontSize: '0.85rem' 
+                }}>
+                  {t('phoneNumberHelpText')}
+                </small>
               )}
             </div>
           )
@@ -149,7 +170,8 @@ function PersonalInfoForm({ qrCodeType, onQrCodeTypeChange, personalInfo, onInfo
         </div>
         )}
         
-        {/* Dynamic Website Fields */}
+        {/* Dynamic Website Fields - Hide for text message */}
+        {qrCodeType !== 'textMessage' && (
         <div className="addresses-section">
           <label className="addresses-label">{t('websites')}</label>
           {personalInfo.websites.map((website, index) => (
@@ -190,6 +212,7 @@ function PersonalInfoForm({ qrCodeType, onQrCodeTypeChange, personalInfo, onInfo
             </div>
           ))}
         </div>
+        )}
         
         {/* Dynamic Address Fields - Only show for phone contact */}
         {qrCodeType === 'phoneContact' && (

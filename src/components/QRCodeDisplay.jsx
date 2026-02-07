@@ -25,7 +25,10 @@ function QRCodeDisplay({ data, personalInfo, qrCodeType }) {
   const qrLabels = getQRLabels()
   
   // Check if there's data based on QR code type
-  const hasData = qrCodeType === 'socialMedia' 
+  const hasData = qrCodeType === 'textMessage'
+    ? // For text message: check phone number only
+      personalInfo.phoneNumber?.trim()
+    : qrCodeType === 'socialMedia' 
     ? // For social media: check LinkedIn, Facebook, or websites
       (personalInfo.linkedIn?.trim() || 
        personalInfo.facebook?.trim() || 

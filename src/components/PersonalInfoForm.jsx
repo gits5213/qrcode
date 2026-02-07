@@ -14,10 +14,12 @@ function PersonalInfoForm({ qrCodeType, onQrCodeTypeChange, personalInfo, onInfo
       // Check what fields are actually filled
       const hasLinkedIn = personalInfo.linkedIn && personalInfo.linkedIn.trim()
       const hasFacebook = personalInfo.facebook && personalInfo.facebook.trim()
+      const hasInstagram = personalInfo.instagram && personalInfo.instagram.trim()
+      const hasTwitter = personalInfo.twitter && personalInfo.twitter.trim()
       const hasWebsites = personalInfo.websites && personalInfo.websites.some(website => website.trim())
       
       // Count how many fields are filled
-      const filledCount = [hasLinkedIn, hasFacebook, hasWebsites].filter(Boolean).length
+      const filledCount = [hasLinkedIn, hasFacebook, hasInstagram, hasTwitter, hasWebsites].filter(Boolean).length
       
       // If nothing is filled yet, show default
       if (filledCount === 0) {
@@ -28,18 +30,27 @@ function PersonalInfoForm({ qrCodeType, onQrCodeTypeChange, personalInfo, onInfo
       if (filledCount === 1) {
         if (hasLinkedIn) return t('headingLinkedInInformation')
         if (hasFacebook) return t('headingFacebookInformation')
+        if (hasInstagram) return t('headingInstagramInformation')
+        if (hasTwitter) return t('headingTwitterInformation')
         if (hasWebsites) return t('headingWebsiteInformation')
       }
       
       // If two fields are filled
       if (filledCount === 2) {
         if (hasLinkedIn && hasFacebook) return t('headingLinkedInFacebookInformation')
+        if (hasLinkedIn && hasInstagram) return t('headingLinkedInInstagramInformation')
+        if (hasLinkedIn && hasTwitter) return t('headingLinkedInTwitterInformation')
         if (hasLinkedIn && hasWebsites) return t('headingLinkedInWebsiteInformation')
+        if (hasFacebook && hasInstagram) return t('headingFacebookInstagramInformation')
+        if (hasFacebook && hasTwitter) return t('headingFacebookTwitterInformation')
         if (hasFacebook && hasWebsites) return t('headingFacebookWebsiteInformation')
+        if (hasInstagram && hasTwitter) return t('headingInstagramTwitterInformation')
+        if (hasInstagram && hasWebsites) return t('headingSocialMediaInformation')
+        if (hasTwitter && hasWebsites) return t('headingSocialMediaInformation')
       }
       
-      // If all three are filled
-      if (filledCount === 3) {
+      // If three or more fields are filled, show comprehensive heading
+      if (filledCount >= 3) {
         return t('headingAllSocialMediaInformation')
       }
       
@@ -55,7 +66,9 @@ function PersonalInfoForm({ qrCodeType, onQrCodeTypeChange, personalInfo, onInfo
     { key: 'phoneNumber', labelKey: 'phoneNumber', placeholderKey: 'placeholderPhoneNumber', type: 'tel' },
     { key: 'whatsappNumber', labelKey: 'whatsappNumber', placeholderKey: 'placeholderWhatsAppNumber', type: 'tel' },
     { key: 'linkedIn', labelKey: 'linkedIn', placeholderKey: 'placeholderLinkedIn', type: 'url' },
-    { key: 'facebook', labelKey: 'facebook', placeholderKey: 'placeholderFacebook', type: 'url' }
+    { key: 'facebook', labelKey: 'facebook', placeholderKey: 'placeholderFacebook', type: 'url' },
+    { key: 'instagram', labelKey: 'instagram', placeholderKey: 'placeholderInstagram', type: 'url' },
+    { key: 'twitter', labelKey: 'twitter', placeholderKey: 'placeholderTwitter', type: 'url' }
   ]
 
   return (
@@ -85,7 +98,7 @@ function PersonalInfoForm({ qrCodeType, onQrCodeTypeChange, personalInfo, onInfo
           }
           
           // For text message: show only phoneNumber, hide others
-          if (qrCodeType === 'textMessage' && (field.key === 'fullName' || field.key === 'whatsappNumber' || field.key === 'linkedIn' || field.key === 'facebook')) {
+          if (qrCodeType === 'textMessage' && (field.key === 'fullName' || field.key === 'whatsappNumber' || field.key === 'linkedIn' || field.key === 'facebook' || field.key === 'instagram' || field.key === 'twitter')) {
             return null
           }
           

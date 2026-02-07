@@ -11,6 +11,8 @@ export const translations = {
     phoneNumberHelpText: 'Enter phone number in any format (local or international). Examples: +1234567890, +8801712345678, 01712345678',
     linkedIn: 'LinkedIn',
     facebook: 'Facebook',
+    instagram: 'Instagram',
+    twitter: 'Twitter',
     personalEmail: 'Personal Email',
     workEmail: 'Work Email',
     emails: 'Emails',
@@ -36,6 +38,8 @@ export const translations = {
     placeholderWhatsAppNumber: '+1234567890',
     placeholderLinkedIn: 'https://linkedin.com/in/yourprofile',
     placeholderFacebook: 'https://facebook.com/yourprofile',
+    placeholderInstagram: 'https://instagram.com/yourprofile',
+    placeholderTwitter: 'https://twitter.com/yourprofile',
     placeholderPersonalEmail: 'your.email@gmail.com',
     placeholderWorkEmail: 'your.work@company.com',
     placeholderTrainingWebsite: 'https://training.example.com',
@@ -74,7 +78,14 @@ export const translations = {
     headingLinkedInFacebookInformation: 'LinkedIn & Facebook Information',
     headingLinkedInWebsiteInformation: 'LinkedIn & Website Information',
     headingFacebookWebsiteInformation: 'Facebook & Website Information',
-    headingAllSocialMediaInformation: 'LinkedIn, Facebook & Website Information'
+    headingInstagramInformation: 'Instagram Information',
+    headingTwitterInformation: 'Twitter Information',
+    headingLinkedInInstagramInformation: 'LinkedIn & Instagram Information',
+    headingLinkedInTwitterInformation: 'LinkedIn & Twitter Information',
+    headingFacebookInstagramInformation: 'Facebook & Instagram Information',
+    headingFacebookTwitterInformation: 'Facebook & Twitter Information',
+    headingInstagramTwitterInformation: 'Instagram & Twitter Information',
+    headingAllSocialMediaInformation: 'LinkedIn, Facebook, Instagram, Twitter & Website Information'
   },
   bn: {
     appTitle: 'ব্যক্তিগত QR কোড জেনারেটর',
@@ -88,6 +99,8 @@ export const translations = {
     phoneNumberHelpText: 'যেকোনো ফরম্যাটে ফোন নম্বর লিখুন (স্থানীয় বা আন্তর্জাতিক)। উদাহরণ: +1234567890, +8801712345678, 01712345678',
     linkedIn: 'লিঙ্কডইন',
     facebook: 'ফেসবুক',
+    instagram: 'ইনস্টাগ্রাম',
+    twitter: 'টুইটার',
     personalEmail: 'ব্যক্তিগত ইমেইল',
     workEmail: 'কর্মস্থল ইমেইল',
     emails: 'ইমেইল',
@@ -113,6 +126,8 @@ export const translations = {
     placeholderWhatsAppNumber: '+৮৮০ ১৭১২ ৩৪৫৬ ৭৮৯০',
     placeholderLinkedIn: 'https://linkedin.com/in/yourprofile',
     placeholderFacebook: 'https://facebook.com/yourprofile',
+    placeholderInstagram: 'https://instagram.com/yourprofile',
+    placeholderTwitter: 'https://twitter.com/yourprofile',
     placeholderPersonalEmail: 'আপনার.ইমেইল@gmail.com',
     placeholderWorkEmail: 'আপনার.কর্মস্থল@company.com',
     placeholderTrainingWebsite: 'https://training.example.com',
@@ -151,7 +166,14 @@ export const translations = {
     headingLinkedInFacebookInformation: 'লিঙ্কডইন ও ফেসবুক তথ্য',
     headingLinkedInWebsiteInformation: 'লিঙ্কডইন ও ওয়েবসাইট তথ্য',
     headingFacebookWebsiteInformation: 'ফেসবুক ও ওয়েবসাইট তথ্য',
-    headingAllSocialMediaInformation: 'লিঙ্কডইন, ফেসবুক ও ওয়েবসাইট তথ্য'
+    headingInstagramInformation: 'ইনস্টাগ্রাম তথ্য',
+    headingTwitterInformation: 'টুইটার তথ্য',
+    headingLinkedInInstagramInformation: 'লিঙ্কডইন ও ইনস্টাগ্রাম তথ্য',
+    headingLinkedInTwitterInformation: 'লিঙ্কডইন ও টুইটার তথ্য',
+    headingFacebookInstagramInformation: 'ফেসবুক ও ইনস্টাগ্রাম তথ্য',
+    headingFacebookTwitterInformation: 'ফেসবুক ও টুইটার তথ্য',
+    headingInstagramTwitterInformation: 'ইনস্টাগ্রাম ও টুইটার তথ্য',
+    headingAllSocialMediaInformation: 'লিঙ্কডইন, ফেসবুক, ইনস্টাগ্রাম, টুইটার ও ওয়েবসাইট তথ্য'
   }
 }
 

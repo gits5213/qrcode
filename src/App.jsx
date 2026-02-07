@@ -14,6 +14,8 @@ function App() {
     whatsappNumber: '',
     linkedIn: '',
     facebook: '',
+    instagram: '',
+    twitter: '',
     textMessage: '',
     emails: [''], // Start with one email (Email 1)
     addresses: [''], // Start with one address (Address 1)
@@ -164,6 +166,24 @@ function App() {
           facebookUrl = 'https://' + facebookUrl
         }
         urlEntries.push({ label: 'Facebook', url: facebookUrl })
+      }
+      
+      // Add Instagram with label
+      if (personalInfo.instagram && personalInfo.instagram.trim()) {
+        let instagramUrl = personalInfo.instagram.trim()
+        if (!instagramUrl.startsWith('http://') && !instagramUrl.startsWith('https://')) {
+          instagramUrl = 'https://' + instagramUrl
+        }
+        urlEntries.push({ label: 'Instagram', url: instagramUrl })
+      }
+      
+      // Add Twitter with label
+      if (personalInfo.twitter && personalInfo.twitter.trim()) {
+        let twitterUrl = personalInfo.twitter.trim()
+        if (!twitterUrl.startsWith('http://') && !twitterUrl.startsWith('https://')) {
+          twitterUrl = 'https://' + twitterUrl
+        }
+        urlEntries.push({ label: 'Twitter', url: twitterUrl })
       }
       
       // Add websites with label

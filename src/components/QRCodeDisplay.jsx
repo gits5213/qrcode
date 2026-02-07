@@ -16,6 +16,12 @@ function QRCodeDisplay({ data, personalInfo, qrCodeType }) {
     if (personalInfo.facebook && personalInfo.facebook.trim()) {
       labels.push('Facebook')
     }
+    if (personalInfo.instagram && personalInfo.instagram.trim()) {
+      labels.push('Instagram')
+    }
+    if (personalInfo.twitter && personalInfo.twitter.trim()) {
+      labels.push('Twitter')
+    }
     if (personalInfo.websites && personalInfo.websites.some(website => website.trim())) {
       labels.push('Website')
     }
@@ -29,9 +35,11 @@ function QRCodeDisplay({ data, personalInfo, qrCodeType }) {
     ? // For text message: check phone number only
       personalInfo.phoneNumber?.trim()
     : qrCodeType === 'socialMedia' 
-    ? // For social media: check LinkedIn, Facebook, or websites
+    ? // For social media: check LinkedIn, Facebook, Instagram, Twitter, or websites
       (personalInfo.linkedIn?.trim() || 
        personalInfo.facebook?.trim() || 
+       personalInfo.instagram?.trim() ||
+       personalInfo.twitter?.trim() ||
        personalInfo.websites?.some(website => website.trim()))
     : // For phone contact: check all fields
       Object.entries(personalInfo).some(([key, value]) => {

@@ -62,6 +62,48 @@ function QRCodeDisplay({ data, personalInfo, qrCodeType }) {
   // Ensure data is valid
   const qrData = data || ''
   
+  // Extract username from URL (helper function)
+  const extractUsernameFromUrl = (url, platform) => {
+    if (!url || !url.trim()) return null
+    
+    try {
+      let cleanUrl = url.trim()
+      // Add https:// if missing
+      if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+        cleanUrl = 'https://' + cleanUrl
+      }
+      
+      const urlObj = new URL(cleanUrl)
+      const pathname = urlObj.pathname
+      
+      // Remove leading and trailing slashes
+      const pathParts = pathname.split('/').filter(part => part.length > 0)
+      
+      if (pathParts.length > 0) {
+        // Get the last meaningful part (usually the username)
+        let username = pathParts[pathParts.length - 1]
+        
+        // Clean username (remove query params, hash, etc.)
+        username = username.split('?')[0].split('#')[0]
+        
+        // For some platforms, the username might be in a different position
+        if (platform === 'linkedin' && pathParts.length > 1 && pathParts[0] === 'in') {
+          username = pathParts[1]
+        }
+        
+        return username || null
+      }
+    } catch (e) {
+      // If URL parsing fails, try simple regex extraction
+      const match = url.match(/(?:linkedin\.com\/in\/|facebook\.com\/|instagram\.com\/|twitter\.com\/|x\.com\/)([^\/\?\#\s]+)/i)
+      if (match && match[1]) {
+        return match[1]
+      }
+    }
+    
+    return null
+  }
+  
   // Get display name for QR code (shown in bottom left corner)
   const getQRCodeDisplayName = () => {
     if (qrCodeType === 'textMessage') {
@@ -70,11 +112,47 @@ function QRCodeDisplay({ data, personalInfo, qrCodeType }) {
     
     if (qrCodeType === 'socialMedia') {
       const labels = []
-      if (personalInfo.linkedIn?.trim()) labels.push('LinkedIn')
-      if (personalInfo.facebook?.trim()) labels.push('Facebook')
-      if (personalInfo.instagram?.trim()) labels.push('Instagram')
-      if (personalInfo.twitter?.trim()) labels.push('Twitter')
-      if (personalInfo.websites?.some(website => website.trim())) labels.push('Website')
+      
+      // Extract usernames and create labels with usernames
+      if (personalInfo.linkedIn?.trim()) {
+        const username = extractUsernameFromUrl(personalInfo.linkedIn, 'linkedin')
+        labels.push(username ? `LinkedIn: ${username}` : 'LinkedIn')
+      }
+      
+      if (personalInfo.facebook?.trim()) {
+        const username = extractUsernameFromUrl(personalInfo.facebook, 'facebook')
+        labels.push(username ? `Facebook: ${username}` : 'Facebook')
+      }
+      
+      if (personalInfo.instagram?.trim()) {
+        const username = extractUsernameFromUrl(personalInfo.instagram, 'instagram')
+        labels.push(username ? `Instagram: ${username}` : 'Instagram')
+      }
+      
+      if (personalInfo.twitter?.trim()) {
+        const username = extractUsernameFromUrl(personalInfo.twitter, 'twitter')
+        labels.push(username ? `Twitter: ${username}` : 'Twitter')
+      }
+      
+      if (personalInfo.websites?.some(website => website.trim())) {
+        // For websites, try to extract domain name
+        const website = personalInfo.websites.find(w => w.trim())
+        if (website) {
+          try {
+            let cleanUrl = website.trim()
+            if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+              cleanUrl = 'https://' + cleanUrl
+            }
+            const urlObj = new URL(cleanUrl)
+            const domain = urlObj.hostname.replace('www.', '')
+            labels.push(`Website: ${domain}`)
+          } catch (e) {
+            labels.push('Website')
+          }
+        } else {
+          labels.push('Website')
+        }
+      }
       
       if (labels.length > 0) {
         return labels.join(', ')
@@ -96,15 +174,69 @@ function QRCodeDisplay({ data, personalInfo, qrCodeType }) {
     }
     
     if (qrCodeType === 'socialMedia') {
-      const labels = []
-      if (personalInfo.linkedIn?.trim()) labels.push('linkedin')
-      if (personalInfo.facebook?.trim()) labels.push('facebook')
-      if (personalInfo.instagram?.trim()) labels.push('instagram')
-      if (personalInfo.twitter?.trim()) labels.push('twitter')
-      if (personalInfo.websites?.some(website => website.trim())) labels.push('website')
+      const usernames = []
       
-      if (labels.length > 0) {
-        return `qr-code-${labels.join('-')}.png`
+      // Extract usernames from URLs
+      if (personalInfo.linkedIn?.trim()) {
+        const username = extractUsernameFromUrl(personalInfo.linkedIn, 'linkedin')
+        if (username) {
+          usernames.push(`linkedin-${username}`)
+        } else {
+          usernames.push('linkedin')
+        }
+      }
+      
+      if (personalInfo.facebook?.trim()) {
+        const username = extractUsernameFromUrl(personalInfo.facebook, 'facebook')
+        if (username) {
+          usernames.push(`facebook-${username}`)
+        } else {
+          usernames.push('facebook')
+        }
+      }
+      
+      if (personalInfo.instagram?.trim()) {
+        const username = extractUsernameFromUrl(personalInfo.instagram, 'instagram')
+        if (username) {
+          usernames.push(`instagram-${username}`)
+        } else {
+          usernames.push('instagram')
+        }
+      }
+      
+      if (personalInfo.twitter?.trim()) {
+        const username = extractUsernameFromUrl(personalInfo.twitter, 'twitter')
+        if (username) {
+          usernames.push(`twitter-${username}`)
+        } else {
+          usernames.push('twitter')
+        }
+      }
+      
+      if (personalInfo.websites?.some(website => website.trim())) {
+        // For websites, try to extract domain name
+        const website = personalInfo.websites.find(w => w.trim())
+        if (website) {
+          try {
+            let cleanUrl = website.trim()
+            if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+              cleanUrl = 'https://' + cleanUrl
+            }
+            const urlObj = new URL(cleanUrl)
+            const domain = urlObj.hostname.replace('www.', '').split('.')[0]
+            usernames.push(`website-${domain}`)
+          } catch (e) {
+            usernames.push('website')
+          }
+        } else {
+          usernames.push('website')
+        }
+      }
+      
+      if (usernames.length > 0) {
+        // Clean usernames for filename (remove special characters)
+        const cleanUsernames = usernames.map(u => u.toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/-+/g, '-').replace(/^-+|-+$/g, ''))
+        return `qr-code-${cleanUsernames.join('-')}.png`
       }
       return 'qr-code-social-media.png'
     }
@@ -170,7 +302,9 @@ function QRCodeDisplay({ data, personalInfo, qrCodeType }) {
                 // Draw text in bottom left corner
                 const displayName = getQRCodeDisplayName()
                 ctx.fillStyle = '#333333'
-                ctx.font = 'bold 14px Arial, sans-serif'
+                // Use smaller font if text is long to fit better
+                const fontSize = displayName.length > 50 ? 12 : 14
+                ctx.font = `bold ${fontSize}px Arial, sans-serif`
                 ctx.textAlign = 'left'
                 ctx.textBaseline = 'bottom'
                 
@@ -183,7 +317,18 @@ function QRCodeDisplay({ data, personalInfo, qrCodeType }) {
                 // Draw text with padding from edges
                 const textX = 15
                 const textY = canvas.height - 10
-                ctx.fillText(displayName, textX, textY)
+                
+                // If text is too long, wrap it or truncate
+                const maxWidth = canvas.width - 30 // Leave margin on right
+                const metrics = ctx.measureText(displayName)
+                
+                if (metrics.width > maxWidth) {
+                  // Try to fit text by reducing font size or wrapping
+                  ctx.font = `bold 11px Arial, sans-serif`
+                  ctx.fillText(displayName, textX, textY)
+                } else {
+                  ctx.fillText(displayName, textX, textY)
+                }
                 
                 // Reset shadow
                 ctx.shadowColor = 'transparent'

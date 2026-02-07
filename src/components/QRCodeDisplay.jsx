@@ -62,6 +62,60 @@ function QRCodeDisplay({ data, personalInfo, qrCodeType }) {
   // Ensure data is valid
   const qrData = data || ''
   
+  // Get display name for QR code (shown in bottom left corner)
+  const getQRCodeDisplayName = () => {
+    if (qrCodeType === 'textMessage') {
+      return 'Text Message'
+    }
+    
+    if (qrCodeType === 'socialMedia') {
+      const labels = []
+      if (personalInfo.linkedIn?.trim()) labels.push('LinkedIn')
+      if (personalInfo.facebook?.trim()) labels.push('Facebook')
+      if (personalInfo.instagram?.trim()) labels.push('Instagram')
+      if (personalInfo.twitter?.trim()) labels.push('Twitter')
+      if (personalInfo.websites?.some(website => website.trim())) labels.push('Website')
+      
+      if (labels.length > 0) {
+        return labels.join(', ')
+      }
+      return 'Social Media'
+    }
+    
+    // For phone contact
+    return personalInfo.fullName?.trim() || 'Contact Card'
+  }
+  
+  // Generate dynamic filename based on QR code type and content
+  const getDownloadFilename = () => {
+    if (qrCodeType === 'textMessage') {
+      const phone = personalInfo.phoneNumber?.trim() || 'phone'
+      // Clean phone number for filename (remove special characters)
+      const cleanPhone = phone.replace(/[^0-9+]/g, '')
+      return `qr-code-text-message-${cleanPhone}.png`
+    }
+    
+    if (qrCodeType === 'socialMedia') {
+      const labels = []
+      if (personalInfo.linkedIn?.trim()) labels.push('linkedin')
+      if (personalInfo.facebook?.trim()) labels.push('facebook')
+      if (personalInfo.instagram?.trim()) labels.push('instagram')
+      if (personalInfo.twitter?.trim()) labels.push('twitter')
+      if (personalInfo.websites?.some(website => website.trim())) labels.push('website')
+      
+      if (labels.length > 0) {
+        return `qr-code-${labels.join('-')}.png`
+      }
+      return 'qr-code-social-media.png'
+    }
+    
+    // For phone contact
+    const name = personalInfo.fullName?.trim() || 'contact'
+    // Clean name for filename (remove special characters, spaces become hyphens)
+    const cleanName = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+    return `qr-code-contact-${cleanName || 'card'}.png`
+  }
+  
   return (
     <div className="qr-container">
       <h2>{t('yourQRCode')}</h2>
@@ -101,12 +155,45 @@ function QRCodeDisplay({ data, personalInfo, qrCodeType }) {
               const ctx = canvas.getContext('2d')
               const img = new Image()
               img.onload = () => {
+                // Set canvas size with extra space at bottom for text
+                const padding = 40
                 canvas.width = img.width
-                canvas.height = img.height
+                canvas.height = img.height + padding
+                
+                // Draw white background
+                ctx.fillStyle = '#ffffff'
+                ctx.fillRect(0, 0, canvas.width, canvas.height)
+                
+                // Draw QR code image
                 ctx.drawImage(img, 0, 0)
+                
+                // Draw text in bottom left corner
+                const displayName = getQRCodeDisplayName()
+                ctx.fillStyle = '#333333'
+                ctx.font = 'bold 14px Arial, sans-serif'
+                ctx.textAlign = 'left'
+                ctx.textBaseline = 'bottom'
+                
+                // Add text shadow for better visibility
+                ctx.shadowColor = 'rgba(255, 255, 255, 0.8)'
+                ctx.shadowBlur = 4
+                ctx.shadowOffsetX = 1
+                ctx.shadowOffsetY = 1
+                
+                // Draw text with padding from edges
+                const textX = 15
+                const textY = canvas.height - 10
+                ctx.fillText(displayName, textX, textY)
+                
+                // Reset shadow
+                ctx.shadowColor = 'transparent'
+                ctx.shadowBlur = 0
+                ctx.shadowOffsetX = 0
+                ctx.shadowOffsetY = 0
+                
                 const pngFile = canvas.toDataURL('image/png')
                 const downloadLink = document.createElement('a')
-                downloadLink.download = 'personal-qrcode.png'
+                downloadLink.download = getDownloadFilename()
                 downloadLink.href = pngFile
                 downloadLink.click()
               }

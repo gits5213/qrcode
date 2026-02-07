@@ -2,14 +2,41 @@ import { QRCodeSVG } from 'qrcode.react'
 import { useLanguage } from '../i18n/LanguageContext'
 import './QRCodeDisplay.css'
 
-function QRCodeDisplay({ data, personalInfo }) {
+function QRCodeDisplay({ data, personalInfo, qrCodeType }) {
   const { t } = useLanguage()
-  const hasData = Object.entries(personalInfo).some(([key, value]) => {
-    if (key === 'addresses' || key === 'emails' || key === 'websites') {
-      return Array.isArray(value) && value.some(item => item.trim() !== '')
+  
+  // Get labels for social media QR codes
+  const getQRLabels = () => {
+    if (qrCodeType !== 'socialMedia') return []
+    
+    const labels = []
+    if (personalInfo.linkedIn && personalInfo.linkedIn.trim()) {
+      labels.push('LinkedIn')
     }
-    return typeof value === 'string' && value.trim() !== ''
-  })
+    if (personalInfo.facebook && personalInfo.facebook.trim()) {
+      labels.push('Facebook')
+    }
+    if (personalInfo.websites && personalInfo.websites.some(website => website.trim())) {
+      labels.push('Website')
+    }
+    return labels
+  }
+  
+  const qrLabels = getQRLabels()
+  
+  // Check if there's data based on QR code type
+  const hasData = qrCodeType === 'socialMedia' 
+    ? // For social media: check LinkedIn, Facebook, or websites
+      (personalInfo.linkedIn?.trim() || 
+       personalInfo.facebook?.trim() || 
+       personalInfo.websites?.some(website => website.trim()))
+    : // For phone contact: check all fields
+      Object.entries(personalInfo).some(([key, value]) => {
+        if (key === 'addresses' || key === 'emails' || key === 'websites') {
+          return Array.isArray(value) && value.some(item => item.trim() !== '')
+        }
+        return typeof value === 'string' && value.trim() !== ''
+      })
 
   if (!hasData) {
     return (
@@ -21,16 +48,33 @@ function QRCodeDisplay({ data, personalInfo }) {
     )
   }
 
+  // Ensure data is valid
+  const qrData = data || ''
+  
   return (
     <div className="qr-container">
       <h2>{t('yourQRCode')}</h2>
       <div className="qr-code-wrapper">
-        <QRCodeSVG
-          value={data}
-          size={300}
-          level="H"
-          includeMargin={true}
-        />
+        {/* Display labels above QR code for social media */}
+        {qrCodeType === 'socialMedia' && qrLabels.length > 0 && (
+          <div className="qr-labels">
+            {qrLabels.map((label, index) => (
+              <span key={index} className="qr-label">{label}</span>
+            ))}
+          </div>
+        )}
+        {qrData ? (
+          <QRCodeSVG
+            value={qrData}
+            size={300}
+            level="H"
+            includeMargin={true}
+          />
+        ) : (
+          <div className="qr-placeholder">
+            <p>No data to encode</p>
+          </div>
+        )}
       </div>
       <div className="qr-info">
         <p className="qr-instructions">

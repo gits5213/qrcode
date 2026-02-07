@@ -98,3 +98,40 @@
   }
 }
 
+.footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  margin-top: 2rem;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.footer-link {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid transparent;
+}
+
+.footer-link:hover {
+  border-bottom-color: white;
+  opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 1.5rem 0.5rem;
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 1rem 0.25rem;
+    margin-top: 1rem;
+    font-size: 0.8rem;
+  }
+}
+

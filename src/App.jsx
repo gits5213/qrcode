@@ -7,15 +7,35 @@ import './App.css'
 
 function App() {
   const { t } = useLanguage()
+  const [qrCodeType, setQrCodeType] = useState('phoneContact') // 'phoneContact' or 'socialMedia'
   const [personalInfo, setPersonalInfo] = useState({
     fullName: '',
     phoneNumber: '',
     whatsappNumber: '',
     linkedIn: '',
+    facebook: '',
     emails: [''], // Start with one email (Email 1)
     addresses: [''], // Start with one address (Address 1)
     websites: [''] // Start with one website (Website 1)
   })
+
+  // Determine dynamic title and subtitle based on QR code type and content
+  const getDynamicTitle = () => {
+    if (qrCodeType === 'socialMedia') {
+      // Check if only websites are present (no LinkedIn or Facebook)
+      const hasLinkedIn = personalInfo.linkedIn && personalInfo.linkedIn.trim()
+      const hasFacebook = personalInfo.facebook && personalInfo.facebook.trim()
+      const hasWebsites = personalInfo.websites && personalInfo.websites.some(website => website.trim())
+      
+      if (hasWebsites && !hasLinkedIn && !hasFacebook) {
+        return { title: t('titleWebsiteInformation'), subtitle: t('subtitleWebsiteInformation') }
+      }
+      return { title: t('titleSocialMediaQRCode'), subtitle: t('subtitleSocialMediaQRCode') }
+    }
+    return { title: t('titlePersonalQRCode'), subtitle: t('subtitlePersonalQRCode') }
+  }
+
+  const { title, subtitle } = getDynamicTitle()
 
   const handleInfoChange = (field, value) => {
     setPersonalInfo(prev => ({
@@ -100,67 +120,115 @@ function App() {
   }
 
   const generateQRData = () => {
-    // Format as vCard (vCard format) for better compatibility with contact scanners
-    const vCardLines = [
-      'BEGIN:VCARD',
-      'VERSION:3.0'
-    ]
-
-    // Add full name if provided
-    if (personalInfo.fullName.trim()) {
-      vCardLines.push(`FN:${personalInfo.fullName}`)
-    }
-
-    // Add phone numbers if provided
-    if (personalInfo.phoneNumber.trim()) {
-      vCardLines.push(`TEL;TYPE=CELL:${personalInfo.phoneNumber}`)
-    }
-    if (personalInfo.whatsappNumber.trim()) {
-      vCardLines.push(`TEL;TYPE=CELL,WA:${personalInfo.whatsappNumber}`)
-    }
-
-    // Add emails
-    personalInfo.emails.forEach((email) => {
-      if (email.trim()) {
-        vCardLines.push(`EMAIL;TYPE=WORK:${email}`)
+    if (qrCodeType === 'socialMedia') {
+      // Generate QR code for social media and websites with labels
+      const urlEntries = []
+      
+      // Add LinkedIn with label
+      if (personalInfo.linkedIn && personalInfo.linkedIn.trim()) {
+        let linkedInUrl = personalInfo.linkedIn.trim()
+        if (!linkedInUrl.startsWith('http://') && !linkedInUrl.startsWith('https://')) {
+          linkedInUrl = 'https://' + linkedInUrl
+        }
+        urlEntries.push({ label: 'LinkedIn', url: linkedInUrl })
       }
-    })
-
-    // Add addresses
-    personalInfo.addresses.forEach((address, index) => {
-      if (address.trim()) {
-        vCardLines.push(`ADR;TYPE=WORK;LABEL="Address ${index + 1}":;;${address.replace(/\n/g, '; ')};;;`)
+      
+      // Add Facebook with label
+      if (personalInfo.facebook && personalInfo.facebook.trim()) {
+        let facebookUrl = personalInfo.facebook.trim()
+        if (!facebookUrl.startsWith('http://') && !facebookUrl.startsWith('https://')) {
+          facebookUrl = 'https://' + facebookUrl
+        }
+        urlEntries.push({ label: 'Facebook', url: facebookUrl })
       }
-    })
-
-    // Add websites
-    personalInfo.websites.forEach((website) => {
-      if (website.trim()) {
-        vCardLines.push(`URL;TYPE=WORK:${website}`)
+      
+      // Add websites with label
+      personalInfo.websites.forEach((website, index) => {
+        if (website.trim()) {
+          let websiteUrl = website.trim()
+          if (!websiteUrl.startsWith('http://') && !websiteUrl.startsWith('https://')) {
+            websiteUrl = 'https://' + websiteUrl
+          }
+          urlEntries.push({ label: 'Website', url: websiteUrl })
+        }
+      })
+      
+      // Format URLs - encode only URLs (not labels) for better QR scanner compatibility
+      // Labels are shown visually on the QR code display
+      if (urlEntries.length === 0) {
+        return 'https://example.com'
       }
-    })
-
-    // Add LinkedIn
-    if (personalInfo.linkedIn.trim()) {
-      vCardLines.push(`URL;TYPE=WORK:${personalInfo.linkedIn}`)
-    }
-
-    vCardLines.push('END:VCARD')
-
-    const vCard = vCardLines.join('\n')
-    
-    // Ensure we always return valid vCard data (at minimum BEGIN and END)
-    if (vCardLines.length <= 3) {
-      // If only BEGIN, VERSION, and END, add a minimal FN field
-      return [
+      
+      // If only one URL, return just the URL
+      if (urlEntries.length === 1) {
+        return urlEntries[0].url
+      }
+      
+      // If multiple URLs, return them separated by newlines
+      return urlEntries.map(entry => entry.url).join('\n')
+    } else {
+      // Format as vCard (vCard format) for better compatibility with contact scanners
+      const vCardLines = [
         'BEGIN:VCARD',
-        'VERSION:3.0',
-        'FN:Contact',
-        'END:VCARD'
-      ].join('\n')
+        'VERSION:3.0'
+      ]
+
+      // Add full name if provided
+      if (personalInfo.fullName.trim()) {
+        vCardLines.push(`FN:${personalInfo.fullName}`)
+      }
+
+      // Add phone numbers if provided
+      if (personalInfo.phoneNumber.trim()) {
+        vCardLines.push(`TEL;TYPE=CELL:${personalInfo.phoneNumber}`)
+      }
+      if (personalInfo.whatsappNumber.trim()) {
+        vCardLines.push(`TEL;TYPE=CELL,WA:${personalInfo.whatsappNumber}`)
+      }
+
+      // Add emails
+      personalInfo.emails.forEach((email) => {
+        if (email.trim()) {
+          vCardLines.push(`EMAIL;TYPE=WORK:${email}`)
+        }
+      })
+
+      // Add addresses
+      personalInfo.addresses.forEach((address, index) => {
+        if (address.trim()) {
+          vCardLines.push(`ADR;TYPE=WORK;LABEL="Address ${index + 1}":;;${address.replace(/\n/g, '; ')};;;`)
+        }
+      })
+
+      // Add websites
+      personalInfo.websites.forEach((website) => {
+        if (website.trim()) {
+          vCardLines.push(`URL;TYPE=WORK:${website}`)
+        }
+      })
+
+      // Add LinkedIn
+      if (personalInfo.linkedIn.trim()) {
+        vCardLines.push(`URL;TYPE=WORK:${personalInfo.linkedIn}`)
+      }
+
+      vCardLines.push('END:VCARD')
+
+      const vCard = vCardLines.join('\n')
+      
+      // Ensure we always return valid vCard data (at minimum BEGIN and END)
+      if (vCardLines.length <= 3) {
+        // If only BEGIN, VERSION, and END, add a minimal FN field
+        return [
+          'BEGIN:VCARD',
+          'VERSION:3.0',
+          'FN:Contact',
+          'END:VCARD'
+        ].join('\n')
+      }
+      
+      return vCard
     }
-    
-    return vCard
   }
 
   return (
@@ -168,12 +236,14 @@ function App() {
       <div className="container">
         <LanguageSwitcher />
         <header className="header">
-          <h1>{t('appTitle')}</h1>
-          <p>{t('appSubtitle')}</p>
+          <h1>{title}</h1>
+          <p>{subtitle}</p>
         </header>
         
         <div className="content">
           <PersonalInfoForm 
+            qrCodeType={qrCodeType}
+            onQrCodeTypeChange={setQrCodeType}
             personalInfo={personalInfo}
             onInfoChange={handleInfoChange}
             onAddressChange={handleAddressChange}
@@ -190,8 +260,23 @@ function App() {
           <QRCodeDisplay 
             data={generateQRData()}
             personalInfo={personalInfo}
+            qrCodeType={qrCodeType}
           />
         </div>
+        
+        <footer className="footer">
+          <p>
+            Design & Developed by{' '}
+            <a 
+              href="https://gitsics.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="footer-link"
+            >
+              Global I Tech Solutions Inc.
+            </a>
+          </p>
+        </footer>
       </div>
     </div>
   )

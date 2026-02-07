@@ -1,46 +1,112 @@
 import { useLanguage } from '../i18n/LanguageContext'
 import './PersonalInfoForm.css'
 
-function PersonalInfoForm({ personalInfo, onInfoChange, onAddressChange, onAddAddress, onRemoveAddress, onEmailChange, onAddEmail, onRemoveEmail, onWebsiteChange, onAddWebsite, onRemoveWebsite }) {
+function PersonalInfoForm({ qrCodeType, onQrCodeTypeChange, personalInfo, onInfoChange, onAddressChange, onAddAddress, onRemoveAddress, onEmailChange, onAddEmail, onRemoveEmail, onWebsiteChange, onAddWebsite, onRemoveWebsite }) {
   const { t } = useLanguage()
+  
+  // Determine dynamic heading based on QR code type and content
+  const getDynamicHeading = () => {
+    if (qrCodeType === 'socialMedia') {
+      // Check what fields are actually filled
+      const hasLinkedIn = personalInfo.linkedIn && personalInfo.linkedIn.trim()
+      const hasFacebook = personalInfo.facebook && personalInfo.facebook.trim()
+      const hasWebsites = personalInfo.websites && personalInfo.websites.some(website => website.trim())
+      
+      // Count how many fields are filled
+      const filledCount = [hasLinkedIn, hasFacebook, hasWebsites].filter(Boolean).length
+      
+      // If nothing is filled yet, show default
+      if (filledCount === 0) {
+        return t('headingSocialMediaInformation')
+      }
+      
+      // If only one field is filled
+      if (filledCount === 1) {
+        if (hasLinkedIn) return t('headingLinkedInInformation')
+        if (hasFacebook) return t('headingFacebookInformation')
+        if (hasWebsites) return t('headingWebsiteInformation')
+      }
+      
+      // If two fields are filled
+      if (filledCount === 2) {
+        if (hasLinkedIn && hasFacebook) return t('headingLinkedInFacebookInformation')
+        if (hasLinkedIn && hasWebsites) return t('headingLinkedInWebsiteInformation')
+        if (hasFacebook && hasWebsites) return t('headingFacebookWebsiteInformation')
+      }
+      
+      // If all three are filled
+      if (filledCount === 3) {
+        return t('headingAllSocialMediaInformation')
+      }
+      
+      return t('headingSocialMediaInformation')
+    }
+    return t('headingPersonalInformation')
+  }
+  
+  const formHeading = getDynamicHeading()
   
   const fields = [
     { key: 'fullName', labelKey: 'fullName', placeholderKey: 'placeholderFullName', type: 'text' },
     { key: 'phoneNumber', labelKey: 'phoneNumber', placeholderKey: 'placeholderPhoneNumber', type: 'tel' },
     { key: 'whatsappNumber', labelKey: 'whatsappNumber', placeholderKey: 'placeholderWhatsAppNumber', type: 'tel' },
-    { key: 'linkedIn', labelKey: 'linkedIn', placeholderKey: 'placeholderLinkedIn', type: 'url' }
+    { key: 'linkedIn', labelKey: 'linkedIn', placeholderKey: 'placeholderLinkedIn', type: 'url' },
+    { key: 'facebook', labelKey: 'facebook', placeholderKey: 'placeholderFacebook', type: 'url' }
   ]
 
   return (
     <div className="form-container">
-      <h2>{t('personalInformation')}</h2>
+      <h2>{formHeading}</h2>
       <form className="personal-info-form">
-        {fields.map(field => (
-          <div key={field.key} className="form-group">
-            <label htmlFor={field.key}>{t(field.labelKey)}</label>
-            {field.type === 'textarea' ? (
-              <textarea
-                id={field.key}
-                value={personalInfo[field.key]}
-                onChange={(e) => onInfoChange(field.key, e.target.value)}
-                placeholder={t(field.placeholderKey)}
-                className="form-input form-textarea"
-                rows="3"
-              />
-            ) : (
-              <input
-                type={field.type}
-                id={field.key}
-                value={personalInfo[field.key]}
-                onChange={(e) => onInfoChange(field.key, e.target.value)}
-                placeholder={t(field.placeholderKey)}
-                className="form-input"
-              />
-            )}
-          </div>
-        ))}
+        {/* QR Code Type Dropdown */}
+        <div className="form-group">
+          <label htmlFor="qrCodeType">{t('qrCodeType')}</label>
+          <select
+            id="qrCodeType"
+            value={qrCodeType}
+            onChange={(e) => onQrCodeTypeChange(e.target.value)}
+            className="form-input form-select"
+          >
+            <option value="phoneContact">{t('qrCodeTypePhoneContact')}</option>
+            <option value="socialMedia">{t('qrCodeTypeSocialMedia')}</option>
+          </select>
+        </div>
         
-        {/* Dynamic Email Fields */}
+        {fields.map(field => {
+          // Show/hide fields based on QR code type
+          // For social media: hide fullName, phone and WhatsApp fields
+          if (qrCodeType === 'socialMedia' && (field.key === 'fullName' || field.key === 'phoneNumber' || field.key === 'whatsappNumber')) {
+            return null
+          }
+          
+          return (
+            <div key={field.key} className="form-group">
+              <label htmlFor={field.key}>{t(field.labelKey)}</label>
+              {field.type === 'textarea' ? (
+                <textarea
+                  id={field.key}
+                  value={personalInfo[field.key] || ''}
+                  onChange={(e) => onInfoChange(field.key, e.target.value)}
+                  placeholder={t(field.placeholderKey)}
+                  className="form-input form-textarea"
+                  rows="3"
+                />
+              ) : (
+                <input
+                  type={field.type}
+                  id={field.key}
+                  value={personalInfo[field.key] || ''}
+                  onChange={(e) => onInfoChange(field.key, e.target.value)}
+                  placeholder={t(field.placeholderKey)}
+                  className="form-input"
+                />
+              )}
+            </div>
+          )
+        })}
+        
+        {/* Dynamic Email Fields - Only show for phone contact */}
+        {qrCodeType === 'phoneContact' && (
         <div className="addresses-section">
           <label className="addresses-label">{t('emails')}</label>
           {personalInfo.emails.map((email, index) => (
@@ -81,6 +147,7 @@ function PersonalInfoForm({ personalInfo, onInfoChange, onAddressChange, onAddAd
             </div>
           ))}
         </div>
+        )}
         
         {/* Dynamic Website Fields */}
         <div className="addresses-section">
@@ -124,7 +191,8 @@ function PersonalInfoForm({ personalInfo, onInfoChange, onAddressChange, onAddAd
           ))}
         </div>
         
-        {/* Dynamic Address Fields */}
+        {/* Dynamic Address Fields - Only show for phone contact */}
+        {qrCodeType === 'phoneContact' && (
         <div className="addresses-section">
           <label className="addresses-label">{t('addresses')}</label>
           {personalInfo.addresses.map((address, index) => (
@@ -165,6 +233,7 @@ function PersonalInfoForm({ personalInfo, onInfoChange, onAddressChange, onAddAd
             </div>
           ))}
         </div>
+        )}
       </form>
     </div>
   )

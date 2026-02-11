@@ -85,7 +85,8 @@ export const translations = {
     headingFacebookInstagramInformation: 'Facebook & Instagram Information',
     headingFacebookTwitterInformation: 'Facebook & Twitter Information',
     headingInstagramTwitterInformation: 'Instagram & Twitter Information',
-    headingAllSocialMediaInformation: 'LinkedIn, Facebook, Instagram, Twitter & Website Information'
+    headingAllSocialMediaInformation: 'LinkedIn, Facebook, Instagram, Twitter & Website Information',
+    visitorCount: 'Visitor count'
   },
   bn: {
     appTitle: 'ব্যক্তিগত QR কোড জেনারেটর',
@@ -173,7 +174,8 @@ export const translations = {
     headingFacebookInstagramInformation: 'ফেসবুক ও ইনস্টাগ্রাম তথ্য',
     headingFacebookTwitterInformation: 'ফেসবুক ও টুইটার তথ্য',
     headingInstagramTwitterInformation: 'ইনস্টাগ্রাম ও টুইটার তথ্য',
-    headingAllSocialMediaInformation: 'লিঙ্কডইন, ফেসবুক, ইনস্টাগ্রাম, টুইটার ও ওয়েবসাইট তথ্য'
+    headingAllSocialMediaInformation: 'লিঙ্কডইন, ফেসবুক, ইনস্টাগ্রাম, টুইটার ও ওয়েবসাইট তথ্য',
+    visitorCount: 'দর্শক সংখ্যা'
   }
 }
 

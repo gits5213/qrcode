@@ -9,5 +9,14 @@ const base = process.env.NODE_ENV === 'production' ? '/qrcode/' : '/'
 export default defineConfig({
   plugins: [react()],
   base: base,
+  server: {
+    proxy: {
+      '/api/countapi': {
+        target: 'https://countapi.mileshilliard.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/countapi/, '/api/v1'),
+      },
+    },
+  },
 })
 

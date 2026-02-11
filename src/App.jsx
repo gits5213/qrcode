@@ -1,13 +1,32 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import PersonalInfoForm from './components/PersonalInfoForm'
 import QRCodeDisplay from './components/QRCodeDisplay'
 import LanguageSwitcher from './components/LanguageSwitcher'
 import { useLanguage } from './i18n/LanguageContext'
 import './App.css'
 
+// Alternative CountAPI (countapi.xyz is often unreachable). Use proxy in dev to avoid CORS.
+const VISITOR_COUNT_API = import.meta.env.DEV
+  ? '/api/countapi/hit/qrcode-landing-visits'
+  : 'https://countapi.mileshilliard.com/api/v1/hit/qrcode-landing-visits'
+
 function App() {
   const { t } = useLanguage()
-  const [qrCodeType, setQrCodeType] = useState('phoneContact') // 'phoneContact', 'socialMedia', or 'textMessage'
+  const [visitorCount, setVisitorCount] = useState(null)
+  const [visitorCountLoaded, setVisitorCountLoaded] = useState(false)
+  const [qrCodeType, setQrCodeType] = useState('phoneContact')
+
+  // Fetch and increment visitor count (works in both local and production)
+  useEffect(() => {
+    fetch(VISITOR_COUNT_API)
+      .then((res) => res.json())
+      .then((data) => {
+        const val = data?.value
+        if (val != null) setVisitorCount(Number(val) || 0)
+      })
+      .catch(() => {})
+      .finally(() => setVisitorCountLoaded(true))
+  }, [])
   const [personalInfo, setPersonalInfo] = useState({
     fullName: '',
     phoneNumber: '',
@@ -319,6 +338,16 @@ function App() {
             >
               Global I Tech Solutions Inc.
             </a>
+          </p>
+          <p className="footer-visitor-count">
+            {t('visitorCount')}:{' '}
+            {!visitorCountLoaded ? (
+              <strong>...</strong>
+            ) : visitorCount != null ? (
+              <strong>{visitorCount.toLocaleString()}</strong>
+            ) : (
+              <strong>—</strong>
+            )}
           </p>
         </footer>
       </div>

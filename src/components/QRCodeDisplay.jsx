@@ -164,13 +164,14 @@ function QRCodeDisplay({ data, personalInfo, qrCodeType }) {
     return personalInfo.fullName?.trim() || 'Contact Card'
   }
   
-  // Generate dynamic filename based on QR code type and content
+  // Generate dynamic filename based on QR code type and content (prefixed with GITS)
   const getDownloadFilename = () => {
+    const gitsPrefix = 'GITS-'
     if (qrCodeType === 'textMessage') {
       const phone = personalInfo.phoneNumber?.trim() || 'phone'
       // Clean phone number for filename (remove special characters)
       const cleanPhone = phone.replace(/[^0-9+]/g, '')
-      return `qr-code-text-message-${cleanPhone}.png`
+      return `${gitsPrefix}qr-code-text-message-${cleanPhone}.png`
     }
     
     if (qrCodeType === 'socialMedia') {
@@ -236,16 +237,16 @@ function QRCodeDisplay({ data, personalInfo, qrCodeType }) {
       if (usernames.length > 0) {
         // Clean usernames for filename (remove special characters)
         const cleanUsernames = usernames.map(u => u.toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/-+/g, '-').replace(/^-+|-+$/g, ''))
-        return `qr-code-${cleanUsernames.join('-')}.png`
+        return `${gitsPrefix}qr-code-${cleanUsernames.join('-')}.png`
       }
-      return 'qr-code-social-media.png'
+      return `${gitsPrefix}qr-code-social-media.png`
     }
     
     // For phone contact
     const name = personalInfo.fullName?.trim() || 'contact'
     // Clean name for filename (remove special characters, spaces become hyphens)
     const cleanName = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
-    return `qr-code-contact-${cleanName || 'card'}.png`
+    return `${gitsPrefix}qr-code-contact-${cleanName || 'card'}.png`
   }
   
   return (
@@ -261,12 +262,15 @@ function QRCodeDisplay({ data, personalInfo, qrCodeType }) {
           </div>
         )}
         {qrData ? (
-          <QRCodeSVG
-            value={qrData}
-            size={300}
-            level="H"
-            includeMargin={true}
-          />
+          <>
+            <QRCodeSVG
+              value={qrData}
+              size={300}
+              level="H"
+              includeMargin={true}
+            />
+            <span className="qr-static-gits">GITS</span>
+          </>
         ) : (
           <div className="qr-placeholder">
             <p>No data to encode</p>
@@ -299,7 +303,7 @@ function QRCodeDisplay({ data, personalInfo, qrCodeType }) {
                 // Draw QR code image
                 ctx.drawImage(img, 0, 0)
                 
-                // Draw text in bottom left corner
+                // Draw text in bottom left corner (display name)
                 const displayName = getQRCodeDisplayName()
                 ctx.fillStyle = '#333333'
                 // Use smaller font if text is long to fit better
@@ -319,7 +323,7 @@ function QRCodeDisplay({ data, personalInfo, qrCodeType }) {
                 const textY = canvas.height - 10
                 
                 // If text is too long, wrap it or truncate
-                const maxWidth = canvas.width - 30 // Leave margin on right
+                const maxWidth = canvas.width - 30 // Leave margin on right for GITS
                 const metrics = ctx.measureText(displayName)
                 
                 if (metrics.width > maxWidth) {
@@ -335,6 +339,13 @@ function QRCodeDisplay({ data, personalInfo, qrCodeType }) {
                 ctx.shadowBlur = 0
                 ctx.shadowOffsetX = 0
                 ctx.shadowOffsetY = 0
+                
+                // Draw static "GITS" in bottom right corner (included in downloaded image)
+                ctx.fillStyle = '#333333'
+                ctx.font = 'bold 14px Arial, sans-serif'
+                ctx.textAlign = 'right'
+                ctx.textBaseline = 'bottom'
+                ctx.fillText('GITS', canvas.width - 15, canvas.height - 10)
                 
                 const pngFile = canvas.toDataURL('image/png')
                 const downloadLink = document.createElement('a')

@@ -41,6 +41,15 @@
   box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
+.qr-static-gits {
+  display: block;
+  margin-top: 0.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #333;
+  letter-spacing: 0.1em;
+}
+
 /* Make the embedded image in QR code circular */
 .qr-code-wrapper svg image {
   clip-path: circle(50% at center);
